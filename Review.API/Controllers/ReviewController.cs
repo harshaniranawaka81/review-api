@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ReviewAPI.BusinessLogicLayer;
+using ReviewAPI.Domain;
 
 namespace Review.API.Controllers
 {
@@ -10,15 +12,55 @@ namespace Review.API.Controllers
     [Route("api/[controller]")]
     public class ReviewController : Controller
     {
-        public ReviewController()
-        {
+        private readonly IReviewService _reviewService;
 
+        public ReviewController(IReviewService reviewService)
+        {
+            _reviewService = reviewService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        /// <summary>
+        /// Get the reviews for a single product 
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        [HttpGet("~/getReviewsForProduct")]
+        public async Task<IEnumerable<IReviewEntry>> GetReviewsForProduct(int productId)
         {
-            return Json("Hello world!");
+            return await _reviewService.GetReviewsForProductAsync(productId);
         }
+
+        /// <summary>
+        /// Get a summary of reviews for product
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        [HttpGet("~/getReviewsSummary")]
+        public async Task<Dictionary<string, double>> GetReviewsSummary(int productId)
+        {
+            return await _reviewService.GetReviewSummaryAsync(productId);
+        }
+
+        /// <summary>
+        /// Get all the reviews
+        /// </summary>
+        /// <returns></returns>   
+        //Not required for this implementation - but added for consistency
+        [HttpGet("~/getAllReviews")]
+        public async Task<IEnumerable<IReviewEntry>> GetAllReviews()
+        {
+            return await _reviewService.GetAllReviewsAsync();
+        }
+
+        /// <summary>
+        /// Save a review 
+        /// </summary>
+        /// <param name="review"></param>
+        /// <returns></returns>
+        [HttpPost("~/submitReview")]
+        public async Task SubmitReview(ReviewEntry review)
+        {
+            await _reviewService.SubmitReviewAsync(review);
+        }       
     }
 }

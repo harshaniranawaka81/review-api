@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Review.API</name>
+    </assembly>
+    <members>
+        <member name="M:Review.API.Controllers.ReviewController.GetReviewsForProduct(System.Int32)">
+            <summary>
+            Get the reviews for a single product 
+            </summary>
+            <param name="productId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Review.API.Controllers.ReviewController.GetReviewsSummary(System.Int32)">
+            <summary>
+            Get a summary of reviews for product
+            </summary>
+            <param name="productId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Review.API.Controllers.ReviewController.GetAllReviews">
+            <summary>
+            Get all the reviews
+            </summary>
+            <returns></returns>   
+        </member>
+        <member name="M:Review.API.Controllers.ReviewController.SubmitReview(ReviewAPI.Domain.ReviewEntry)">
+            <summary>
+            Save a review 
+            </summary>
+            <param name="review"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

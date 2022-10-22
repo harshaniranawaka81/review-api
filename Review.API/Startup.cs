@@ -4,7 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using ReviewAPI.BusinessLogicLayer;
+using ReviewAPI.DataAccessLayer;
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace Review.API
 {
@@ -26,7 +31,22 @@ namespace Review.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo {Title = "Review API", Version = "v1"});
+
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+
+                var filePath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
+                c.IncludeXmlComments(filePath);
             });
+
+            services.AddScoped<IReviewService, ReviewService>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
+
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+
+            services.AddScoped<ReviewDataContext, ReviewDataContext>();
+            services.AddDbContext<ReviewDataContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

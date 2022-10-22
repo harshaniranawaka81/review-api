@@ -7,6 +7,10 @@
     <UserSecretsId>e0b6cdf0-395d-41f1-8d0c-058c7f95569e</UserSecretsId>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>D:\Learning\Interviews\beerwulf-test\Review.API\Review.API.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.4.10" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.1" />
@@ -14,6 +18,12 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.6.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.6.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Review.DAL\ReviewAPI.DataAccessLayer.csproj" />
+    <ProjectReference Include="..\ReviewAPI.BLL\ReviewAPI.BusinessLogicLayer.csproj" />
+    <ProjectReference Include="..\ReviewAPI.Domain\ReviewAPI.Domain.csproj" />
   </ItemGroup>
 
 </Project>
