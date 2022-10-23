@@ -24,7 +24,7 @@
             </summary>
             <returns></returns>   
         </member>
-        <member name="M:Review.API.Controllers.ReviewController.SubmitReview(ReviewAPI.Domain.IReviewEntry)">
+        <member name="M:Review.API.Controllers.ReviewController.SubmitReview(ReviewAPI.Domain.ReviewEntry)">
             <summary>
             Save a review 
             </summary>

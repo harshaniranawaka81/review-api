@@ -70,7 +70,7 @@ namespace ReviewAPI.BusinessLogicLayer
             return results;
         }
 
-        public async Task SubmitReviewAsync(IReviewEntry review)
+        public async Task SubmitReviewAsync(ReviewEntry review)
         {
             await _repository.SaveReviewAsync(review); 
         }
