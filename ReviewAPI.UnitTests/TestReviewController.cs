@@ -6,6 +6,7 @@ using ReviewAPI.DataAccessLayer;
 using ReviewAPI.Domain;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,25 +15,24 @@ namespace ReviewAPI.UnitTests
     [TestClass]
     public class TestReviewController
     {
-        private readonly DbContextOptions<ReviewDataContext> dbContextOptions = new DbContextOptionsBuilder<ReviewDataContext>()
-               .UseInMemoryDatabase(databaseName: "ReviewDB")
-               .Options;
-
+        private ReviewRepository reviewRepository;
+        private ReviewService reviewService;
         private ReviewController controller;
-        private IEnumerable<ReviewEntry> testReviews;
+        private List<ReviewEntry> testReviews;
+        private ReviewDataContext dataContext;
 
-        public void Setup()
+        private void Setup()
         {
+            SetTestReviews();
             SeedDb();
 
-            var reviewRepository = new ReviewRepository(new ReviewDataContext(dbContextOptions));
-            var reviewService = new ReviewService(reviewRepository);
+            reviewRepository = new ReviewRepository(dataContext);
+            reviewService = new ReviewService(reviewRepository);
             controller = new ReviewController(reviewService);
         }
 
-        private void SeedDb()
+        private void SetTestReviews()
         {
-            using var context = new ReviewDataContext(dbContextOptions);
             testReviews = new List<ReviewEntry>
             {
                 new ReviewEntry() { ReviewID = 1, ReviewTitle = "Review1", ProductID = 1, ReviewComment = "Review comment 1", IsRecommendedProduct = true, ReviewScore = 5 },
@@ -46,36 +46,98 @@ namespace ReviewAPI.UnitTests
                 new ReviewEntry() { ReviewID = 9, ReviewTitle = "Review9", ProductID = 5, ReviewComment = "Review comment 9", IsRecommendedProduct = false, ReviewScore = 2 },
                 new ReviewEntry() { ReviewID = 10, ReviewTitle = "Review10", ProductID = 5, ReviewComment = "Review comment 10", IsRecommendedProduct = false, ReviewScore = 1 }
              };
+        }
 
-            context.AddRange(testReviews);
-            context.SaveChanges();
+        private void SeedDb()
+        {
+            var dbContextOptions = new DbContextOptionsBuilder<ReviewDataContext>()
+              .UseInMemoryDatabase(databaseName: "ReviewDB")
+              .Options;
+
+            dataContext = new ReviewDataContext(dbContextOptions);
+
+            if (dataContext.Reviews.Any())
+            {
+                dataContext.Reviews.RemoveRange(testReviews);
+                dataContext.SaveChanges();
+            }
+
+            dataContext.AddRange(testReviews);
+            dataContext.SaveChanges();
+        }
+
+        private static ReviewEntry GetTestReview()
+        {
+            return new ReviewEntry() { ReviewID = 11, ReviewTitle = "Review11", ProductID = 1, ReviewComment = "Review comment 11", IsRecommendedProduct = true, ReviewScore = 4 };
         }
 
         [TestMethod]
-        public async Task GetReviewsForProduct_ShouldReturnProducts()
+        [DataRow(2)]
+        public async Task GetReviewsForProduct_ShouldReturnReviewsForProduct(int productId)
         {
             Setup();
 
-            var result = await controller.GetAllReviews();
-            Assert.AreEqual(result.Count(), testReviews.ToList().Count); ;
+            var result = await controller.GetReviewsForProduct(productId);
+
+            var reviewsForProduct = testReviews.Where(r => r.ProductID == productId).Count();
+            Debug.WriteLine($"reviewsForProduct = {reviewsForProduct}");
+
+            Assert.AreEqual(result.Count(), reviewsForProduct);
         }
 
         [TestMethod]
-        public async Task GetReviewsForProduct_GetReviewsSummary(int productId)
+        [DataRow(1)]
+        public async Task GetReviewsSummary_CheckValues(int productId)
         {
             Setup();
 
             var result = await controller.GetReviewsSummary(productId);
 
             var averageReviewsForProduct = testReviews.Where(r => r.ProductID == productId).ToList().Average(r => r.ReviewScore);
+
             averageReviewsForProduct = Math.Round(averageReviewsForProduct, 2);
 
+            Debug.WriteLine($"averageReviewsForProduct = {averageReviewsForProduct}");
+
             var reviewsForProduct = testReviews.Where(r => r.ProductID == productId).Count();
+
+            Debug.WriteLine($"reviewsForProduct = {reviewsForProduct}");
+
             var recommendedReviewsForProduct = testReviews.Where(r => r.ProductID == productId && r.IsRecommendedProduct == true).Count();
-            var percentageOfRecommendedProducts = Math.Round(recommendedReviewsForProduct / averageReviewsForProduct * 100, 2);
+
+            Debug.WriteLine($"recommendedReviewsForProduct = {recommendedReviewsForProduct}");
+
+            var percentageOfRecommendedProducts = Math.Round((double)recommendedReviewsForProduct / reviewsForProduct * 100, 2);
+
+            Debug.WriteLine($"percentageOfRecommendedProducts = {percentageOfRecommendedProducts}");
 
             Assert.AreEqual(result.ElementAt(0).Value, averageReviewsForProduct);
             Assert.AreEqual(result.ElementAt(1).Value, percentageOfRecommendedProducts);
+        }
+
+
+        [TestMethod]
+        public async Task GetAllReviews_ShouldReturnReviews()
+        {
+            Setup();
+
+            var result = await controller.GetAllReviews();
+            Assert.AreEqual(result.Count(), testReviews.ToList().Count);
+        }
+
+        [TestMethod]       
+        public async Task SubmitReview_ShouldCreateNewReview()
+        {
+            Setup();
+
+            var review = GetTestReview();
+            testReviews.Add(review);
+
+            await controller.SubmitReview(review);
+
+            var result = await controller.GetAllReviews();
+            Assert.AreEqual(result.Count(), testReviews.ToList().Count);
+
         }
     }
 }

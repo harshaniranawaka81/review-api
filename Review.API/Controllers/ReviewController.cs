@@ -58,7 +58,7 @@ namespace Review.API.Controllers
         /// <param name="review"></param>
         /// <returns></returns>
         [HttpPost("~/submitReview")]
-        public async Task SubmitReview(ReviewEntry review)
+        public async Task SubmitReview(IReviewEntry review)
         {
             await _reviewService.SubmitReviewAsync(review);
         }       

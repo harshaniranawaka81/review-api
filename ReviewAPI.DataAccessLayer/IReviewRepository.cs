@@ -10,7 +10,7 @@ namespace ReviewAPI.DataAccessLayer
         //Not required for this implementation - but added for consistency
         Task<IReviewEntry?> GetReviewAsync(int reviewId);
 
-        Task SaveReviewAsync(ReviewEntry review);
+        Task SaveReviewAsync(IReviewEntry review);
 
         //Not required for this implementation - but added for consistency
         Task UpdateReviewAsync(ReviewEntry review);

@@ -9,7 +9,7 @@ namespace ReviewAPI.BusinessLogicLayer
 {
     public interface IReviewService
     {
-        Task SubmitReviewAsync(ReviewEntry review);
+        Task SubmitReviewAsync(IReviewEntry review);
 
         Task<IEnumerable<IReviewEntry>> GetReviewsForProductAsync(int productId);
 
