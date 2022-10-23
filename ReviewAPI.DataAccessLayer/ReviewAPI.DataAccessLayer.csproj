@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.17" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Review.DAL\ReviewAPI.DataAccessLayer.csproj" />
     <ProjectReference Include="..\ReviewAPI.Domain\ReviewAPI.Domain.csproj" />
   </ItemGroup>
 

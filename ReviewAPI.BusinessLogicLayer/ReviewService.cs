@@ -53,7 +53,10 @@ namespace ReviewAPI.BusinessLogicLayer
             double avgScore = Math.Round(reviews.Average(r => r.ReviewScore), 2);
             int recommendedCount = reviews.Count(r => r.IsRecommendedProduct);
 
-            int totalCount = await GetAllReviewsCountAsync();
+            //Here rather than using GetAllReviewsAsync and counting the total I introduced a new method to the repository considering the performance
+            //To calculate just the count there is no point to pulling all records from database to the application
+            //Rather than pulling all we can just get the count
+            int totalCount = await _repository.GetTotalReviewsForProductAsync(productId);
 
             double recommendedPercentage = 0;
             if (recommendedCount > 0)
@@ -83,18 +86,6 @@ namespace ReviewAPI.BusinessLogicLayer
             }
 
             return reviews;
-        }
-
-        public async Task<int> GetAllReviewsCountAsync()
-        {
-            var reviews = await _repository.GetAllReviewsAsync();
-
-            if (reviews == null || reviews.Count() == 0)
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound);
-            }
-
-            return reviews.Count();
         }
     }
 }

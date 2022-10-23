@@ -37,6 +37,11 @@ namespace ReviewAPI.DataAccessLayer
             return await _context.Reviews.Where(r => r.ProductID == productId).ToListAsync();
         }
 
+        public async Task<int> GetTotalReviewsForProductAsync(int productId)
+        {
+            return await _context.Reviews.CountAsync(r => r.ProductID == productId);
+        }
+
         public async Task SaveReviewAsync(ReviewEntry review)
         {
             _context.Add(review);

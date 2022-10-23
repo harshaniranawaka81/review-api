@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Review.DAL\ReviewAPI.DataAccessLayer.csproj" />
-    <ProjectReference Include="..\ReviewAPI.BLL\ReviewAPI.BusinessLogicLayer.csproj" />
+    <ProjectReference Include="..\ReviewAPI.BusinessLogicLayer\ReviewAPI.BusinessLogicLayer.csproj" />
+    <ProjectReference Include="..\ReviewAPI.DataAccessLayer\ReviewAPI.DataAccessLayer.csproj" />
     <ProjectReference Include="..\ReviewAPI.Domain\ReviewAPI.Domain.csproj" />
   </ItemGroup>
 

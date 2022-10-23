@@ -21,6 +21,8 @@ namespace ReviewAPI.DataAccessLayer
         //Not required for this implementation - but added for consistency
         Task<IEnumerable<IReviewEntry>?> GetAllReviewsAsync();
 
+        Task<int> GetTotalReviewsForProductAsync(int productId);
+
         Task<IEnumerable<IReviewEntry>?> GetReviewsForProductAsync (int productId);
     }
 }

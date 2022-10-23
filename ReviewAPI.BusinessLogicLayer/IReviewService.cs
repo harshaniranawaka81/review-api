@@ -17,7 +17,5 @@ namespace ReviewAPI.BusinessLogicLayer
 
         //Not required for this implementation - but added for consistency
         Task<IEnumerable<IReviewEntry>> GetAllReviewsAsync();
-
-        Task<int> GetAllReviewsCountAsync();
     }
 }
