@@ -2,4 +2,6 @@
 Sample web api to save and view reviews
 
 Technologies:
-React hooks (useState, useEffect) and functional components
+C#
+ASP .NET Core Web API
+Entity Framework Core In Memory
