@@ -1,2 +1,2 @@
-# beerwulf-test
- Test API developed for Beerwulf
+# review api
+Sample web api to save and view reviews
