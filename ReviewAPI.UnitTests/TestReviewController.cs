@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Review.API.Controllers;
@@ -70,6 +71,55 @@ namespace ReviewAPI.UnitTests
         {
             return new ReviewEntry() { ReviewID = 11, ReviewTitle = "Review11", ProductID = 1, ReviewComment = "Review comment 11", IsRecommendedProduct = true, ReviewScore = 4 };
         }
+        
+        [TestMethod]
+        public async Task SubmitReview_ShouldCreateNewReview()
+        {
+            Setup();
+
+            var review = GetTestReview();
+            testReviews.Add(review);
+
+            await controller.SubmitReview(review);
+
+            var result = await controller.GetAllReviews();
+            Assert.AreEqual(result.Count(), testReviews.ToList().Count);
+        }
+
+        [TestMethod]
+        public async Task GetAllReviews_ShouldReturnAllReviews()
+        {
+            Setup();
+
+            var result = await controller.GetAllReviews();
+            Assert.AreEqual(result.Count(), testReviews.ToList().Count);
+        }
+
+        [TestMethod]
+        [DataRow(1)]
+        public async Task GetAllReviews_ShouldDeleteReview(int reviewId)
+        {
+            Setup();
+
+            await controller.DeleteReview(reviewId);
+            var testReview = testReviews.RemoveAll(r => r.ReviewID == reviewId);
+
+            var allReviews = await controller.GetAllReviews();
+
+            Assert.AreEqual(allReviews.Count(), testReviews.ToList().Count);
+        }
+
+        [TestMethod]
+        [DataRow(1)]
+        public async Task GetAllReviews_ShouldReturnSingleReview(int reviewId)
+        {
+            Setup();
+
+            var result = await controller.GetReview(reviewId);
+            var testReview = testReviews.FirstOrDefault(r => r.ReviewID == reviewId);
+
+            Assert.AreSame(result, testReview);
+        }
 
         [TestMethod]
         [DataRow(2)]
@@ -91,7 +141,7 @@ namespace ReviewAPI.UnitTests
         {
             Setup();
 
-            var result = await controller.GetReviewsSummary(productId);
+            IReviewSummary result = await controller.GetReviewsSummary(productId);
 
             var averageReviewsForProduct = testReviews.Where(r => r.ProductID == productId).ToList().Average(r => r.ReviewScore);
 
@@ -103,7 +153,7 @@ namespace ReviewAPI.UnitTests
 
             Debug.WriteLine($"reviewsForProduct = {reviewsForProduct}");
 
-            var recommendedReviewsForProduct = testReviews.Where(r => r.ProductID == productId && r.IsRecommendedProduct == true).Count();
+            var recommendedReviewsForProduct = testReviews.Where(r => r.ProductID == productId && r.IsRecommendedProduct).Count();
 
             Debug.WriteLine($"recommendedReviewsForProduct = {recommendedReviewsForProduct}");
 
@@ -111,33 +161,9 @@ namespace ReviewAPI.UnitTests
 
             Debug.WriteLine($"percentageOfRecommendedProducts = {percentageOfRecommendedProducts}");
 
-            Assert.AreEqual(result.ElementAt(0).Value, averageReviewsForProduct);
-            Assert.AreEqual(result.ElementAt(1).Value, percentageOfRecommendedProducts);
+            Assert.AreEqual(result.AverageScore, averageReviewsForProduct);
+            Assert.AreEqual(result.RecommendedPercentage, percentageOfRecommendedProducts);
         }
 
-
-        [TestMethod]
-        public async Task GetAllReviews_ShouldReturnReviews()
-        {
-            Setup();
-
-            var result = await controller.GetAllReviews();
-            Assert.AreEqual(result.Count(), testReviews.ToList().Count);
-        }
-
-        [TestMethod]       
-        public async Task SubmitReview_ShouldCreateNewReview()
-        {
-            Setup();
-
-            var review = GetTestReview();
-            testReviews.Add(review);
-
-            await controller.SubmitReview(review);
-
-            var result = await controller.GetAllReviews();
-            Assert.AreEqual(result.Count(), testReviews.ToList().Count);
-
-        }
     }
 }

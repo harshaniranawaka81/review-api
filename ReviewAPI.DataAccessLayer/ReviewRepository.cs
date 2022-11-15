@@ -13,33 +13,30 @@ namespace ReviewAPI.DataAccessLayer
         public ReviewRepository(ReviewDataContext context)
             => _context = context;
 
-        //Not required for this implementation - but added for consistency
         public async Task DeleteReviewAsync(int reviewId)
         {
-            _context.Remove(reviewId);
-            await _context.SaveChangesAsync();
+            var review = _context.Reviews.FirstOrDefault(r => r.ReviewID == reviewId);
+
+            if (review != null)
+            {
+                _context.Reviews.Remove(review);
+                _context.SaveChanges();
+            }
         }
 
-        //Not required for this implementation - but added for consistency
-        public async Task<IReviewEntry?> GetReviewAsync(int reviewId)
+        public async Task<IReviewEntry> GetReviewAsync(int reviewId)
         {
             return await _context.Reviews.FindAsync(reviewId);
         }
 
-        //Not required for this implementation - but added for consistency
         public async Task<IEnumerable<IReviewEntry>> GetAllReviewsAsync()
         {
             return await _context.Reviews.ToListAsync();
         }
 
-        public async Task<IEnumerable<IReviewEntry>?> GetReviewsForProductAsync(int productId)
+        public async Task<IEnumerable<IReviewEntry>> GetReviewsForProductAsync(int productId)
         {
             return await _context.Reviews.Where(r => r.ProductID == productId).ToListAsync();
-        }
-
-        public async Task<int> GetTotalReviewsForProductAsync(int productId)
-        {
-            return await _context.Reviews.CountAsync(r => r.ProductID == productId);
         }
 
         public async Task SaveReviewAsync(ReviewEntry review)
@@ -48,7 +45,6 @@ namespace ReviewAPI.DataAccessLayer
             await _context.SaveChangesAsync();
         }
 
-        //Not required for this implementation - but added for consistency
         public async Task UpdateReviewAsync(ReviewEntry review)
         {
             _context.Update(review);

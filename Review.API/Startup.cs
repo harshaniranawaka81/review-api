@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Review.API
 {
@@ -32,18 +33,12 @@ namespace Review.API
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo {Title = "Review API", Version = "v1"});
 
-                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-
-                var filePath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
-                c.IncludeXmlComments(filePath);
+                var xmlFilename = Configuration.GetValue<string>("SwaggerXmlFileName");
+                c.IncludeXmlComments(Path.Combine(Directory.GetCurrentDirectory(), xmlFilename));
             });
 
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
-
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddScoped<ReviewDataContext, ReviewDataContext>();
             services.AddDbContext<ReviewDataContext>();

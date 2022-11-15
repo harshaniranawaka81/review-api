@@ -11,11 +11,17 @@ namespace ReviewAPI.BusinessLogicLayer
     {
         Task SubmitReviewAsync(ReviewEntry review);
 
-        Task<IEnumerable<IReviewEntry>> GetReviewsForProductAsync(int productId);
+        Task EditReviewAsync(ReviewEntry review);
 
-        Task<Dictionary<string, double>> GetReviewSummaryAsync(int productId);
+        Task DeleteReviewAsync(int reviewId);
 
-        //Not required for this implementation - but added for consistency
+        Task<IReviewEntry> GetReviewAsync(int reviewId);
+
         Task<IEnumerable<IReviewEntry>> GetAllReviewsAsync();
+
+        Task<IReviewSummary> GetReviewSummaryAsync(int productId);
+
+        Task<IEnumerable<IReviewEntry>> GetReviewsForProductAsync(int productId); 
+        
     }
 }

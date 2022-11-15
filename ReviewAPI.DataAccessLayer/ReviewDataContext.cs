@@ -18,7 +18,5 @@ namespace ReviewAPI.DataAccessLayer
         }
 
         public DbSet<ReviewEntry> Reviews { get; set; }
-        public DbSet<Product> Products { get; set; }
-
     }
 }
