@@ -20,7 +20,7 @@ namespace ReviewAPI.DataAccessLayer
             if (review != null)
             {
                 _context.Reviews.Remove(review);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
 
